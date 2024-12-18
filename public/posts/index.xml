@@ -13,7 +13,7 @@
       <link>http://localhost:1313/posts/hello-world/</link>
       <pubDate>Wed, 18 Dec 2024 21:39:30 +0530</pubDate>
       <guid>http://localhost:1313/posts/hello-world/</guid>
-      <description></description>
+      <description>&lt;p&gt;Sample content for hello world post.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
