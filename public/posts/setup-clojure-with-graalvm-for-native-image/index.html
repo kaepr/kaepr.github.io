@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html><head lang="en"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Setup Clojure with GraalVM for Native Image - Shagun Agrawal&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Setup Clojure, GraalVM for generating native images. Also add Flowstorm for debugging." />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="http://localhost:1313/posts/setup-clojure-with-graalvm-for-native-image/">
+  <meta property="og:site_name" content="Shagun Agrawal&#39;s Blog">
+  <meta property="og:title" content="Setup Clojure with GraalVM for Native Image">
+  <meta property="og:description" content="Setup Clojure, GraalVM for generating native images. Also add Flowstorm for debugging.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-12-18T22:07:00+05:30">
+    <meta property="article:modified_time" content="2024-12-18T22:07:00+05:30">
+    <meta property="article:tag" content="Clojure">
+    <meta property="article:tag" content="Graalvm">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Setup Clojure with GraalVM for Native Image">
+  <meta name="twitter:description" content="Setup Clojure, GraalVM for generating native images. Also add Flowstorm for debugging.">
+<script src="http://localhost:1313/js/feather.min.js"></script>
+	
+	
+        <link href="http://localhost:1313/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/main.5cebd7d4fb2b97856af8d32a6def16164fcf7d844e98e236fcb3559655020373.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:1313/css/dark.d22e2a2879d933a4b781535fc4c4c716e9f9d35ea4986dd0cbabda82effc4bdd.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="http://localhost:1313/">Shagun Agrawal&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">Home</a>
+		
+		<a href="/posts">All posts</a>
+		
+		<a href="/about">About</a>
+		
+		<a href="/tags">Tags</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="http://localhost:1313/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Setup Clojure with GraalVM for Native Image</h1>
+			<div class="meta">Posted on Dec 18, 2024</div>
+		</div>
+		
+
+		
+
+		<section class="body">
+			<p>This post will detail the steps to setup Clojure and GraalVM to generate native executables. I used a similar approach when creating my project <a href="https://github.com/kaepr/cljcc">cljcc</a>. It has a few extra steps on on top of generating a native image, but this
+post will have just the minimum things required to build uberjar and generating image.</p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li><a href="https://www.graalvm.org/latest/getting-started/">GraalVM</a></li>
+<li><a href="https://clojure.org/guides/getting_started">Clojure</a>
+<ul>
+<li><a href="https://clojure.org/guides/tools_build">tools.build</a></li>
+<li><a href="https://github.com/clj-easy/graal-build-time">clj-easy graal build time</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="project-structure">Project Structure</h2>
+<pre tabindex="0"><code>├── build.clj
+├── deps.edn
+├── src
+│   └── demo
+│       └── core.clj
+└── target 
+</code></pre><p>The <code>demo/core.clj</code> file simply prepends <code>&quot;Hello&quot;</code> to the first argument, and prints to stdout.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clj" data-lang="clj"><span style="display:flex;"><span>(<span style="color:#66d9ef">ns </span>demo.core
+</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">:gen-class</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>-main [<span style="color:#f92672">&amp;</span> args]
+</span></span><span style="display:flex;"><span>  (println (str <span style="color:#e6db74">&#34;Hello &#34;</span> (first args))))
+</span></span></code></pre></div><p>The <code>:gen-class</code> is necessary, as this informs the <a href="https://clojure.org/reference/compilation">build process</a> to generate a Main entrypoint for the Java program. Without <code>:gen-class</code>, although a uberjar will be built,
+the native image generation will fail with the below error.</p>
+<pre tabindex="0"><code>Error: Main entry point class &#39;demo.core&#39; neither found on
+classpath: &#39;/home/shagun-agrawal/Development/setup-clj-graalvm/target/demo.core-1.0.0-standalone.jar&#39; nor
+modulepath: &#39;/home/shagun-agrawal/.sdkman/candidates/java/23-graalce/lib/svm/library-support.jar&#39;.
+Internal exception: com.oracle.svm.core.util.UserError$UserException: Main entry point class &#39;demo.core&#39; neither found on
+classpath: &#39;/home/shagun-agrawal/Development/setup-clj-graalvm/target/demo.core-1.0.0-standalone.jar&#39; nor
+modulepath: &#39;/home/shagun-agrawal/.sdkman/candidates/java/23-graalce/lib/svm/library-support.jar&#39;.
+	at org.graalvm.nativeimage.builder/com.oracle.svm.core.util.UserError.abort(UserError.java:85)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.hosted.NativeImageGeneratorRunner.buildImage(NativeImageGeneratorRunner.java:440)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.hosted.NativeImageGeneratorRunner.build(NativeImageGeneratorRunner.java:711)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.hosted.NativeImageGeneratorRunner.start(NativeImageGeneratorRunner.java:139)
+	at org.graalvm.nativeimage.builder/com.oracle.svm.hosted.NativeImageGeneratorRunner.main(NativeImageGeneratorRunner.java:94)
+</code></pre><p>Below is the <code>deps.edn</code> file. It has an extra alias for nrepl.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-edn" data-lang="edn"><span style="display:flex;"><span>{<span style="color:#e6db74">:paths</span> [<span style="color:#e6db74">&#34;src&#34;</span>]
+</span></span><span style="display:flex;"><span> <span style="color:#e6db74">:deps</span> {com.github.clj-easy/graal-build-time {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;1.0.5&#34;</span>}}
+</span></span><span style="display:flex;"><span> <span style="color:#e6db74">:aliases</span>
+</span></span><span style="display:flex;"><span> {<span style="color:#e6db74">:run-main</span> {<span style="color:#e6db74">:main-opts</span> [<span style="color:#e6db74">&#34;-m&#34;</span> <span style="color:#e6db74">&#34;demo.core&#34;</span>]}
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">:build</span> {<span style="color:#e6db74">:deps</span> {io.github.clojure/tools.build {<span style="color:#e6db74">:git/tag</span> <span style="color:#e6db74">&#34;v0.10.6&#34;</span> <span style="color:#e6db74">:git/sha</span> <span style="color:#e6db74">&#34;52cf7d6&#34;</span>}}
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">:ns-default</span> build}
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">:nrepl</span> {<span style="color:#e6db74">:extra-deps</span> {nrepl/nrepl {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;1.3.0&#34;</span>}
+</span></span><span style="display:flex;"><span>                       cider/cider-nrepl {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;0.50.2&#34;</span>}
+</span></span><span style="display:flex;"><span>                       refactor-nrepl/refactor-nrepl {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;3.10.0&#34;</span>}}
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">:main-opts</span> [<span style="color:#e6db74">&#34;-m&#34;</span> <span style="color:#e6db74">&#34;nrepl.cmdline&#34;</span> <span style="color:#e6db74">&#34;--interactive&#34;</span> <span style="color:#e6db74">&#34;--color&#34;</span> <span style="color:#e6db74">&#34;--middleware&#34;</span> <span style="color:#e6db74">&#34;[cider.nrepl/cider-middleware,refactor-nrepl.middleware/wrap-refactor]&#34;</span>]}}}
+</span></span></code></pre></div><p>Adding aliases to <code>deps.edn</code> can be managed using a tool called <a href="https://github.com/babashka/neil">neil</a>.
+I found about this tool from <a href="https://www.youtube.com/watch?v=pVvuyaRDA58">Developer Tooling for Speed and Productivity in 2024 | Vedang Manerikar</a>.
+I earlier used to rely on Doom Emacs <code>cider-jack-in-clj</code> function, which starts a clojure REPL automatically and connects to it, but I wasn&rsquo;t aware of how it works ( for e.g. the command lines options being passed etc ).
+Starting up a repl in different shell and connecting to it from my editor is much simpler.
+It also makes it editor agnostic, as the setup for starting a REPL is present in the deps file itself</p>
+<p>The above video also includes setup for logging, flowstorm debugger, documentation, project structure etc.</p>
+<p>Use <code>clj -M:nrepl</code> to start the server. I then use Doom Emacs <code>cider-connect</code> function to attach to it.</p>
+<h2 id="building-uberjar">Building Uberjar</h2>
+<p><code>build.clj</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clj" data-lang="clj"><span style="display:flex;"><span>(<span style="color:#66d9ef">ns </span>build
+</span></span><span style="display:flex;"><span>  (<span style="color:#e6db74">:require</span> [clojure.tools.build.api <span style="color:#e6db74">:as</span> b]))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>lib <span style="color:#e6db74">&#39;demo.core</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>version <span style="color:#e6db74">&#34;1.0.0&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>class-dir <span style="color:#e6db74">&#34;target/classes&#34;</span>)
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>uber-file (<span style="color:#a6e22e">format</span> <span style="color:#e6db74">&#34;target/%s-%s-standalone.jar&#34;</span> (name lib) version))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;; delay to defer side effects (artifact downloads)</span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">def </span>basis (<span style="color:#a6e22e">delay</span> (<span style="color:#a6e22e">b/create-basis</span> {<span style="color:#e6db74">:project</span> <span style="color:#e6db74">&#34;deps.edn&#34;</span>})))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>clean [_]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">b/delete</span> {<span style="color:#e6db74">:path</span> <span style="color:#e6db74">&#34;target&#34;</span>}))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">defn </span>uber [_]
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">clean</span> nil)
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">b/copy-dir</span> {<span style="color:#e6db74">:src-dirs</span> [<span style="color:#e6db74">&#34;src&#34;</span> <span style="color:#e6db74">&#34;resources&#34;</span>]
+</span></span><span style="display:flex;"><span>               <span style="color:#e6db74">:target-dir</span> class-dir})
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">b/compile-clj</span> {<span style="color:#e6db74">:basis</span> <span style="color:#f92672">@</span>basis
+</span></span><span style="display:flex;"><span>                  <span style="color:#e6db74">:ns-compile</span> <span style="color:#f92672">&#39;</span>[demo.core]
+</span></span><span style="display:flex;"><span>                  <span style="color:#e6db74">:class-dir</span> class-dir})
+</span></span><span style="display:flex;"><span>  (<span style="color:#a6e22e">b/uber</span> {<span style="color:#e6db74">:class-dir</span> class-dir
+</span></span><span style="display:flex;"><span>           <span style="color:#e6db74">:uber-file</span> uber-file
+</span></span><span style="display:flex;"><span>           <span style="color:#e6db74">:basis</span> <span style="color:#f92672">@</span>basis
+</span></span><span style="display:flex;"><span>           <span style="color:#e6db74">:main</span> <span style="color:#e6db74">&#39;demo.core</span>}))
+</span></span></code></pre></div><p>Run <code>clj -T:build uber</code>, which generates a jar file under <code>/target</code> directory.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>java -jar ./target/demo.core-1.0.0-standalone.jar World
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Hello World
+</span></span></code></pre></div><p>To automate the creation of a new application, take a look at <a href="https://github.com/seancorfield/deps-new">deps-new</a>. It automatically sets up a <code>deps.edn</code> and <code>build.clj</code> file. and has aliases for starting repl, building uberjar etc.</p>
+<p>The <code>deps.edn</code> file also has a dependency on <a href="https://github.com/clj-easy/graal-build-time">graal-build-time</a>. Adding it to deps adds this library to classpath.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>clj -Spath <span style="color:#75715e"># without adding library in deps.edn</span>
+</span></span><span style="display:flex;"><span>src:/home/shagun-agrawal/.m2/repository/org/clojure/clojure/1.12.0/clojure-1.12.0.jar:/home/shagun-agrawal/.m2/repository/org/clojure/core.specs.alpha/0.4.74/core.specs.alpha-0.4.74.jar:/home/shagun-agrawal/.m2/repository/org/clojure/spec.alpha/0.5.238/spec.alpha-0.5.238.jar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>clj -Spath <span style="color:#75715e"># after adding library in deps.edn</span>
+</span></span><span style="display:flex;"><span>src:/home/shagun-agrawal/.m2/repository/com/github/clj-easy/graal-build-time/1.0.5/graal-build-time-1.0.5.jar:/home/shagun-agrawal/.m2/repository/org/clojure/clojure/1.12.0/clojure-1.12.0.jar:/home/shagun-agrawal/.m2/repository/org/clojure/core.specs.alpha/0.4.74/core.specs.alpha-0.4.74.jar:/home/shagun-agrawal/.m2/repository/org/clojure/spec.alpha/0.5.238/spec.alpha-0.5.238.jar
+</span></span></code></pre></div><p>Without this dependency, the generated jar after the build also has differences.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jar tf demo.core-1.0.0-standalone.jar | grep <span style="color:#e6db74">&#39;/&#39;</span> | cut -d<span style="color:#e6db74">&#39;/&#39;</span> -f1 | sort -u <span style="color:#75715e"># without dep</span>
+</span></span><span style="display:flex;"><span>clojure
+</span></span><span style="display:flex;"><span>demo
+</span></span><span style="display:flex;"><span>META-INF
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>jar tf demo.core-1.0.0-standalone.jar | grep <span style="color:#e6db74">&#39;/&#39;</span> | cut -d<span style="color:#e6db74">&#39;/&#39;</span> -f1 | sort -u <span style="color:#75715e"># with dep</span>
+</span></span><span style="display:flex;"><span>clj-easy
+</span></span><span style="display:flex;"><span>clj_easy
+</span></span><span style="display:flex;"><span>clojure
+</span></span><span style="display:flex;"><span>demo
+</span></span><span style="display:flex;"><span>META-INF
+</span></span></code></pre></div><p>The native image commands needs to initialize <code>.class</code> files at build time. To automatically identify which files needs to be initialized,
+<code>graal-build-time</code> library will detect <code>.class</code> files, and uses the feature flag ( mentioned in the below command ) to mark them to be initialized at build time.</p>
+<h2 id="generate-native-image">Generate Native Image</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>native-image -jar target/demo.core-1.0.0-standalone.jar -o target/demo -H:+ReportExceptionStackTraces --features<span style="color:#f92672">=</span>clj_easy.graal_build_time.InitClojureClasses --report-unsupported-elements-at-runtime --verbose --no-fallback
+</span></span></code></pre></div><p>This generates an executable at <code>/target/demo</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./target/demo <span style="color:#e6db74">&#34;World&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Hello World
+</span></span></code></pre></div><h2 id="alias-for-adding-flowstorm">Alias for adding Flowstorm</h2>
+<p>I couldn&rsquo;t find the command in neil which adds flowstorm alias to a project. The below alias will setup nREPL and flowstorm.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-edn" data-lang="edn"><span style="display:flex;"><span><span style="color:#e6db74">:storm</span> {<span style="color:#75715e">;; for disabling the official compiler</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">:classpath-overrides</span> {org.clojure/clojure nil}
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">:extra-deps</span> {io.github.clojure/tools.build {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;0.10.3&#34;</span>}
+</span></span><span style="display:flex;"><span>                       nrepl/nrepl {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;1.3.0&#34;</span>}
+</span></span><span style="display:flex;"><span>                       cider/cider-nrepl {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;0.50.2&#34;</span>}
+</span></span><span style="display:flex;"><span>                       refactor-nrepl/refactor-nrepl {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;3.10.0&#34;</span>}
+</span></span><span style="display:flex;"><span>                       com.github.flow-storm/clojure {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;1.11.4-1&#34;</span>}
+</span></span><span style="display:flex;"><span>                       com.github.flow-storm/flow-storm-dbg {<span style="color:#e6db74">:mvn/version</span> <span style="color:#e6db74">&#34;4.0.1&#34;</span>}}
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">:jvm-opts</span> [<span style="color:#e6db74">&#34;-Dclojure.storm.instrumentEnable=true&#34;</span>
+</span></span><span style="display:flex;"><span>                     <span style="color:#e6db74">&#34;-Dclojure.storm.instrumentOnlyPrefixes=&lt;NAMESPACE&gt;&#34;</span>]
+</span></span><span style="display:flex;"><span>          <span style="color:#e6db74">:main-opts</span> [<span style="color:#e6db74">&#34;-m&#34;</span> <span style="color:#e6db74">&#34;nrepl.cmdline&#34;</span> <span style="color:#e6db74">&#34;--interactive&#34;</span> <span style="color:#e6db74">&#34;--color&#34;</span> <span style="color:#e6db74">&#34;--middleware&#34;</span> <span style="color:#e6db74">&#34;[flow-storm.nrepl.middleware/wrap-flow-storm,cider.nrepl/cider-middleware,refactor-nrepl.middleware/wrap-refactor]&#34;</span>]}
+</span></span></code></pre></div><p>Use <code>clj -M:storm</code> to start a nREPL session with flowstorm. Evaluate <code>:dbg</code> in the REPL to launch the debugger.
+Refer <a href="https://flow-storm.github.io/flow-storm-debugger/user_guide.html">Flowstorm Documentation</a> on how to use the debugger.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=pVvuyaRDA58">Developer Tooling for Speed and Productivity in 2024 | Vedang Manerikar</a></li>
+<li><a href="https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/ClassInitialization/">Class Initialization in Native Image</a></li>
+<li><a href="https://www.braveclojure.com/java/">Clojure for the Brave and True, Working with JVM</a></li>
+</ul>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/clojure">clojure</a></li>
+					
+					<li><a href="/tags/graalvm">graalvm</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/kaepr" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a><a class="soc" href="https://x.com/agrawalshagun10" rel="me" title="Twitter"><i data-feather="twitter"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>
