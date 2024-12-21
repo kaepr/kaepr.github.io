@@ -1,112 +1,261 @@
 <!DOCTYPE html>
-<html><head lang="en"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Clojure - Shagun Agrawal&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="My personal blog, posts about programming projects etc." />
-	<meta property="og:image" content=""/>
-	<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/clojure/index.xml" title="Shagun Agrawal's Blog" />
-	<meta property="og:url" content="http://localhost:1313/tags/clojure/">
-  <meta property="og:site_name" content="Shagun Agrawal&#39;s Blog">
+<html lang="en-us"
+  dir="ltr">
+
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+
+<link rel="icon" type="image/ico" href="http://localhost:1313/override/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/override/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/override/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="http://localhost:1313/override/android-chrome-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://localhost:1313/override/apple-touch-icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/clojure/index.xml" title="Shagun Agrawal">
+<meta name="description" content=""/>
+
+<title>
+    
+    Clojure | Shagun Agrawal
+    
+</title>
+
+<link rel="canonical" href="http://localhost:1313/tags/clojure/"/>
+
+<meta property="og:url" content="http://localhost:1313/tags/clojure/">
+  <meta property="og:site_name" content="Shagun Agrawal">
   <meta property="og:title" content="Clojure">
-  <meta property="og:description" content="My personal blog, posts about programming projects etc.">
+  <meta property="og:description" content="Shagun Agrawal&#39;s personal blog. Posts about functional programming, projects and learnings.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="website">
 
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Clojure">
-  <meta name="twitter:description" content="My personal blog, posts about programming projects etc.">
-<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
-
-	
-	<link rel="stylesheet" type="text/css" media="screen" href="http://localhost:1313/css/main.5cebd7d4fb2b97856af8d32a6def16164fcf7d844e98e236fcb3559655020373.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://localhost:1313/css/dark.d22e2a2879d933a4b781535fc4c4c716e9f9d35ea4986dd0cbabda82effc4bdd.css"  disabled />
-	
-
-	
-	
-		<script type="text/javascript"
-		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-		</script>
-
-		
-		<script type="text/x-mathjax-config">
-		MathJax.Hub.Config({
-			tex2jax: {
-				inlineMath: [['$','$'], ['\\(','\\)']],
-				displayMath: [['$$','$$'], ['\[','\]']],
-				processEscapes: true,
-				processEnvironments: true,
-				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-				TeX: { equationNumbers: { autoNumber: "AMS" },
-						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
-			}
-		});
-		</script>
-	
-
-	
-	
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
-		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
-		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
-
-		
-		<script>
-			document.addEventListener("DOMContentLoaded", function() {
-					renderMathInElement(document.body, {
-							delimiters: [
-									{left: "$$", right: "$$", display: true},
-									{left: "$", right: "$", display: false}
-							]
-					});
-			});
-			</script>
-	
-
-	
-</head>
-<body>
-        <div class="content"><header>
-	<div class="main">
-		<a href="http://localhost:1313/">Shagun Agrawal&#39;s Blog</a>
-	</div>
-	<nav>
-		
-		<a href="/">Home</a>
-		
-		<a href="/posts">All posts</a>
-		
-		<a href="/about">About</a>
-		
-		<a href="/tags">Tags</a>
-		
-		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
-		<script src="http://localhost:1313/js/themetoggle.js"></script>
-		
-	</nav>
-</header>
 
 
-<h1>Entries tagged - "clojure"</h1>
 
 
-<ul class="posts"><li class="post">
-			<a href="/posts/setup-clojure-with-graalvm-for-native-image/">Setup Clojure with GraalVM for Native Image</a> <span class="meta">Dec 18, 2024</span>
-		</li></ul>
-<footer>
-  <div style="display:flex"><a class="soc" href="https://github.com/kaepr" rel="me" title="GitHub"><i data-feather="github"></i></a>
-    <a class="border"></a><a class="soc" href="https://x.com/agrawalshagun10" rel="me" title="Twitter"><i data-feather="twitter"></i></a>
-    <a class="border"></a></div>
-  <div class="footer-info">
-    2024  <a
-      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
-  </div>
-</footer>
-<script>
-  feather.replace()
-</script></div>
-    </body>
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/assets/combined.min.01980ad4202828eb32272e7b1654f79f3c0022c15b1c932668dff73dffaf7e88.css" media="all">
+
+
+
+
+
+  </head>
+
+  
+
+  
+  
+  
+
+  <body class="dark">
+
+    <div class="content">
+      <header>
+        
+
+<div class="header">
+
+    
+
+    <h1 class="header-title">
+        <a href="http://localhost:1313/">Shagun Agrawal</a>
+    </h1>
+
+    <div class="flex">
+        
+
+        
+        
+      
+        <p class="small ">
+            <a href="/" >
+                /home
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/posts" >
+                /posts
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/about" >
+                /about
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/tags" >
+                /tags
+            </a>
+        </p>
+        
+        
+    </div>
+
+    
+
+</div>
+
+      </header>
+
+      <main class="main">
+        
+
+<div class="list-container">
+
+    
+<div class="breadcrumbs">
+    
+    <a href="/">Home</a>
+    <span class="breadcrumbs-separator"> > </span>
+    
+    <a href="/tags/">Tags</a>
+    <span class="breadcrumbs-separator"> > </span>
+    
+    <a class="breadcrumbs-current" href="/tags/clojure/">Clojure</a>
+</div>
+
+
+    <h1>Clojure</h1>
+    
+
+    
+
+    
+    
+    
+    
+
+    
+
+    
+
+    
+    <div class="post-line">
+
+    
+    
+    
+    
+
+    <p class="line-date">21 Dec 2024 </p>
+
+    <div>
+        <p class="line-title">
+            <a href="/posts/writing-a-c-compiler-in-clojure/">
+                Writing a C Compiler in Clojure
+            </a>
+        </p>
+
+        
+        <p class="line-summary"> This post describes my experience of writing a C compiler in Clojure. </p>
+        
+    </div>
+</div>
+    
+
+    
+
+    
+    <div class="post-line">
+
+    
+    
+    
+    
+
+    <p class="line-date">18 Dec 2024 </p>
+
+    <div>
+        <p class="line-title">
+            <a href="/posts/setup-clojure-with-graalvm-for-native-image/">
+                Setup Clojure with GraalVM for Native Image
+            </a>
+        </p>
+
+        
+        <p class="line-summary"> Setup Clojure, GraalVM for generating native images. Extra setup I do for developing clojure applications locally. </p>
+        
+    </div>
+</div>
+    
+
+    
+
+    
+
+</div>
+
+      </main>
+    </div>
+
+    <footer>
+      
+
+    
+    <p>Powered by
+        <a href="https://gohugo.io/">Hugo</a>
+        and
+        <a href="https://github.com/tomfran/typo">tomfran/typo</a>
+    </p>
+    
+    
+    
+
+
+    </footer>
+
+    
+
+  </body>
+
+  <script>
+
+  function isAuto() {
+    return document.body.classList.contains("auto");
+  }
+
+  function setTheme() {
+    if (!isAuto()) {
+      return
+    }
+
+    document.body.classList.remove("auto");
+    let cls = "light";
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      cls = "dark";
+    }
+
+    document.body.classList.add(cls);
+  }
+
+  function invertBody() {
+    document.body.classList.toggle("dark");
+    document.body.classList.toggle("light");
+  }
+
+  if (isAuto()) {
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(invertBody);
+  }
+
+  setTheme();
+
+</script>
+
 </html>

@@ -1,12 +1,19 @@
 ---
-date: '2024-12-18T22:07:00+05:30'
+date: "2024-12-18"
 draft: false
 title: 'Setup Clojure with GraalVM for Native Image'
-tags: [clojure, graalvm]
-description: "Setup Clojure, GraalVM for generating native images. Also add Flowstorm for debugging."
+tags: ["clojure", "graalvm"]
+showTags: true
+description: "Setup Clojure, GraalVM for generating native images. Extra setup I do for developing clojure applications locally."
+summary: "Setup Clojure, GraalVM for generating native images. Extra setup I do for developing clojure applications locally."
+hidePagination: true
+toc: true
+readTime: true
+autonumber: true
 ---
 
-This post will detail the steps to setup Clojure and GraalVM to generate native executables. I used a similar approach when creating my project [cljcc](https://github.com/kaepr/cljcc). It has a few extra steps on on top of generating a native image, but this 
+
+This post will detail the steps to setup Clojure and GraalVM to generate native executable. I used a similar approach when creating my project [cljcc](https://github.com/kaepr/cljcc). It has a few extra steps on on top of generating a native image, but this
 post will have just the minimum things required to build uberjar and generating image.
 
 ## Requirements
@@ -16,7 +23,7 @@ post will have just the minimum things required to build uberjar and generating 
     * [tools.build](https://clojure.org/guides/tools_build)
     * [clj-easy graal build time](https://github.com/clj-easy/graal-build-time)
 
-## Project Structure 
+## Project Structure
 
 ```
 ├── build.clj
@@ -24,7 +31,7 @@ post will have just the minimum things required to build uberjar and generating 
 ├── src
 │   └── demo
 │       └── core.clj
-└── target 
+└── target
 ```
 
 
@@ -39,8 +46,8 @@ The `demo/core.clj` file simply prepends `"Hello"` to the first argument, and pr
 
 ```
 
-The `:gen-class` is necessary, as this informs the [build process](https://clojure.org/reference/compilation) to generate a Main entrypoint for the Java program. Without `:gen-class`, although a uberjar will be built, 
-the native image generation will fail with the below error. 
+The `:gen-class` is necessary, as this informs the [build process](https://clojure.org/reference/compilation) to generate a Main entrypoint for the Java program. Without `:gen-class`, although a uberjar will be built,
+the native image generation will fail with the below error.
 
 ```
 Error: Main entry point class 'demo.core' neither found on
@@ -56,7 +63,7 @@ modulepath: '/home/shagun-agrawal/.sdkman/candidates/java/23-graalce/lib/svm/lib
 	at org.graalvm.nativeimage.builder/com.oracle.svm.hosted.NativeImageGeneratorRunner.main(NativeImageGeneratorRunner.java:94)
 ```
 
-Below is the `deps.edn` file. It has an extra alias for nrepl. 
+Below is the `deps.edn` file. It has an extra alias for nrepl.
 
 ```edn
 {:paths ["src"]
@@ -72,10 +79,10 @@ Below is the `deps.edn` file. It has an extra alias for nrepl.
 
 ```
 
-Adding aliases to `deps.edn` can be managed using a tool called [neil](https://github.com/babashka/neil). 
-I found about this tool from [Developer Tooling for Speed and Productivity in 2024 | Vedang Manerikar](https://www.youtube.com/watch?v=pVvuyaRDA58). 
-I earlier used to rely on Doom Emacs `cider-jack-in-clj` function, which starts a clojure REPL automatically and connects to it, but I wasn't aware of how it works ( for e.g. the command lines options being passed etc ). 
-Starting up a repl in different shell and connecting to it from my editor is much simpler. 
+Adding aliases to `deps.edn` can be managed using a tool called [neil](https://github.com/babashka/neil).
+I found about this tool from [Developer Tooling for Speed and Productivity in 2024 | Vedang Manerikar](https://www.youtube.com/watch?v=pVvuyaRDA58).
+I earlier used to rely on Doom Emacs `cider-jack-in-clj` function, which starts a clojure REPL automatically and connects to it, but I wasn't aware of how it works ( for e.g. the command lines options being passed etc ).
+Starting up a repl in different shell and connecting to it from my editor is much simpler.
 It also makes it editor agnostic, as the setup for starting a REPL is present in the deps file itself
 
 The above video also includes setup for logging, flowstorm debugger, documentation, project structure etc.
@@ -85,7 +92,7 @@ Use `clj -M:nrepl` to start the server. I then use Doom Emacs `cider-connect` fu
 
 ## Building Uberjar
 
-`build.clj` 
+`build.clj`
 
 ```clj
 (ns build
@@ -150,7 +157,7 @@ demo
 META-INF
 ```
 
-The native image commands needs to initialize `.class` files at build time. To automatically identify which files needs to be initialized, 
+The native image commands needs to initialize `.class` files at build time. To automatically identify which files needs to be initialized,
 `graal-build-time` library will detect `.class` files, and uses the feature flag ( mentioned in the below command ) to mark them to be initialized at build time.
 
 ## Generate Native Image
@@ -186,7 +193,7 @@ I couldn't find the command in neil which adds flowstorm alias to a project. The
           :main-opts ["-m" "nrepl.cmdline" "--interactive" "--color" "--middleware" "[flow-storm.nrepl.middleware/wrap-flow-storm,cider.nrepl/cider-middleware,refactor-nrepl.middleware/wrap-refactor]"]}
 ```
 
-Use `clj -M:storm` to start a nREPL session with flowstorm. Evaluate `:dbg` in the REPL to launch the debugger. 
+Use `clj -M:storm` to start a nREPL session with flowstorm. Evaluate `:dbg` in the REPL to launch the debugger.
 Refer [Flowstorm Documentation](https://flow-storm.github.io/flow-storm-debugger/user_guide.html) on how to use the debugger.
 
 ## References
@@ -194,4 +201,3 @@ Refer [Flowstorm Documentation](https://flow-storm.github.io/flow-storm-debugger
 - [Developer Tooling for Speed and Productivity in 2024 | Vedang Manerikar](https://www.youtube.com/watch?v=pVvuyaRDA58)
 - [Class Initialization in Native Image](https://www.graalvm.org/latest/reference-manual/native-image/optimizations-and-performance/ClassInitialization/)
 - [Clojure for the Brave and True, Working with JVM](https://www.braveclojure.com/java/)
-

@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Clojure on Shagun Agrawal&#39;s Blog</title>
+    <title>Clojure on Shagun Agrawal</title>
     <link>http://localhost:1313/tags/clojure/</link>
-    <description>Recent content in Clojure on Shagun Agrawal&#39;s Blog</description>
+    <description>Recent content in Clojure on Shagun Agrawal</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 18 Dec 2024 22:07:00 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 21 Dec 2024 14:26:14 +0530</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/clojure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Writing a C Compiler in Clojure</title>
+      <link>http://localhost:1313/posts/writing-a-c-compiler-in-clojure/</link>
+      <pubDate>Sat, 21 Dec 2024 14:26:14 +0530</pubDate>
+      <guid>http://localhost:1313/posts/writing-a-c-compiler-in-clojure/</guid>
+      <description>This post describes my experience of writing a C compiler in Clojure.</description>
+    </item>
     <item>
       <title>Setup Clojure with GraalVM for Native Image</title>
       <link>http://localhost:1313/posts/setup-clojure-with-graalvm-for-native-image/</link>
-      <pubDate>Wed, 18 Dec 2024 22:07:00 +0530</pubDate>
+      <pubDate>Wed, 18 Dec 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/setup-clojure-with-graalvm-for-native-image/</guid>
-      <description>&lt;p&gt;This post will detail the steps to setup Clojure and GraalVM to generate native executables. I used a similar approach when creating my project &lt;a href=&#34;https://github.com/kaepr/cljcc&#34;&gt;cljcc&lt;/a&gt;. It has a few extra steps on on top of generating a native image, but this&#xA;post will have just the minimum things required to build uberjar and generating image.&lt;/p&gt;&#xA;&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.graalvm.org/latest/getting-started/&#34;&gt;GraalVM&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://clojure.org/guides/getting_started&#34;&gt;Clojure&lt;/a&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://clojure.org/guides/tools_build&#34;&gt;tools.build&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://github.com/clj-easy/graal-build-time&#34;&gt;clj-easy graal build time&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;project-structure&#34;&gt;Project Structure&lt;/h2&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;├── build.clj&#xA;├── deps.edn&#xA;├── src&#xA;│   └── demo&#xA;│       └── core.clj&#xA;└── target &#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The &lt;code&gt;demo/core.clj&lt;/code&gt; file simply prepends &lt;code&gt;&amp;quot;Hello&amp;quot;&lt;/code&gt; to the first argument, and prints to stdout.&lt;/p&gt;</description>
+      <description>Setup Clojure, GraalVM for generating native images. Extra setup I do for developing clojure applications locally.</description>
     </item>
   </channel>
 </rss>

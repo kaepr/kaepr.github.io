@@ -1,44 +1,72 @@
 baseURL = 'https://kaepr.github.io/'
 languageCode = 'en-us'
-title = "Shagun Agrawal's Blog"
-theme = "archie"
+title = "Shagun Agrawal"
+theme = "typo"
+
+[taxonomies]
+tag = 'tags'
+
+# Google analytics code
+googleAnalytics = "G-TZJRZ24350"
 
 [params]
-    mode="toggle" # color-mode → light,dark,toggle or auto
-    useCDN=true # don't use CDNs for fonts and icons, instead serve them locally.
-    subtitle = ""
-    mathjax = true # enable MathJax support
-    katex = true # enable KaTeX support
-    description = "My personal blog, posts about programming projects etc."
+# Meta description
+description = "Shagun Agrawal's personal blog. Posts about functional programming, projects and learnings."
 
+# Appearance settings
+theme = 'dark'
+colorPalette = "gruvebox"
+
+# Intro on main page, content is markdown
+homeIntroTitle = 'Hi!'
+homeIntroContent = """
+I am a software engineer, with interest in programming languages, compilers and functional programming.
+
+This website is to document my learnings, share my projects and write about random things I find interesting.
+"""
+
+# Collection to display on home
+homeCollectionTitle = 'Posts'
+homeCollection = 'posts'
+
+# Lists parameters
+paginationSize = 100
+listSummaries = true
+listDateFormat = '2 Jan 2006'
+
+# Breadcrumbs
+breadcrumbs = true
+
+# Favicon
+faviconPath = "override"
+
+# Social icons
 [[params.social]]
-name = "GitHub"
-icon = "github"
+name = "github"
 url = "https://github.com/kaepr"
 
 [[params.social]]
-name = "Twitter"
-icon = "twitter"
+name = "x"
 url = "https://x.com/agrawalshagun10"
 
-# Main menu Items
-
-[[menu.main]]
-name = "Home"
+# Main menu pages
+[[params.menu]]
+name = "home"
 url = "/"
-weight = 1
 
-[[menu.main]]
-name = "All posts"
+[[params.menu]]
+name = "posts"
 url = "/posts"
-weight = 2
 
-[[menu.main]]
-name = "About"
+[[params.menu]]
+name = "about"
 url = "/about"
-weight = 3
 
-[[menu.main]]
-name = "Tags"
+[[params.menu]]
+name = "tags"
 url = "/tags"
-weight = 4
+
+# Syntax highligth on code blocks
+[markup]
+[markup.highlight]
+style = 'modus-vivendi'
