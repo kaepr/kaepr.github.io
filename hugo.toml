@@ -5,10 +5,11 @@ theme = "archie"
 
 [params]
     mode="toggle" # color-mode → light,dark,toggle or auto
-    useCDN=false # don't use CDNs for fonts and icons, instead serve them locally.
+    useCDN=true # don't use CDNs for fonts and icons, instead serve them locally.
     subtitle = ""
     mathjax = true # enable MathJax support
     katex = true # enable KaTeX support
+    description = "My personal blog, posts about programming projects etc."
 
 [[params.social]]
 name = "GitHub"
