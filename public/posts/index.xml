@@ -6,12 +6,12 @@
     <description>Recent content in Posts on Shagun Agrawal</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Dec 2024 14:26:14 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 21 Dec 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Writing a C Compiler in Clojure</title>
       <link>http://localhost:1313/posts/writing-a-c-compiler-in-clojure/</link>
-      <pubDate>Sat, 21 Dec 2024 14:26:14 +0530</pubDate>
+      <pubDate>Sat, 21 Dec 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/writing-a-c-compiler-in-clojure/</guid>
       <description>This post describes my experience of writing a C compiler in Clojure.</description>
     </item>

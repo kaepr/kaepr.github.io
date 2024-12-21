@@ -49,6 +49,8 @@ There are a lot of references to other projects/conference talks/articles throug
 The post will be broken down into the major passes of the compiler.
 Each subsequent pass takes in as input the return value from the last stage.
 
+The code is avaiable at [kaepr/cljcc](https://github.com/kaepr/cljcc).
+
 
 ```clojure
 (defn run [source]
@@ -120,14 +122,14 @@ For example, below is the code for typechecking a local variable declaration.
        :ident->symbol updated-symbols})))
 ```
 
-I could refactor out some functionality above, such as the `:static` and `:extern` functions can be in their different functions, but it does not help that much.
+I could refactor out some functionality above, such as the `:static` and `:extern` cases can be in their different functions, but it does not help that much.
 I would be hiding these inside some other function, and sometimes I just prefer the entire logic to be present at once.
 Another problem was naming, the original function name was already too long, and another specialized case function felt wrong.
 
 There are a lot of such instances, especially in this pass of the compiler, where I want to refactor.
 There seems to be a lot of repetitive code, but it's mixed with the complexity of C specification aswell (for e.g. storage class specifiers), so I still haven't been able to refactor it to something I am happy with.
 
-One of the solutions to this problem, I guess would be to be read more code.
+One of the solutions to this problem ( or in general ), I guess would be to be read more code.
 I have watched a lot of conference talks, but throughout building this I realized I haven't actually read more codebases.
 One of the projects which helped me and gave new ideas is [tools.analyzer](https://github.com/clojure/tools.analyzer). I will describe how it helped in the [tacky](#tacky) section.
 
@@ -159,5 +161,5 @@ Listed below are some articles, projects which can help to find other projects, 
 I am yet to complete the book. Many of the upcoming features are quite core to C, such as pointers, arrays, structs.
 As of now, I feel the base structure of the compiler is there, and each feature can be neatly added on top.
 But as those features are more complex than the ones presented above, there is a still a gradual difficulty curve,
-and I notice more oppurtunities to make my implementation simpler.
+and I notice more oppurtunities to make my code simpler.
 Looking forward to implementing the rest of the book !

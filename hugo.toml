@@ -6,9 +6,6 @@ theme = "typo"
 [taxonomies]
 tag = 'tags'
 
-# Google analytics code
-googleAnalytics = "G-TZJRZ24350"
-
 [params]
 # Meta description
 description = "Shagun Agrawal's personal blog. Posts about functional programming, projects and learnings."
@@ -39,6 +36,11 @@ breadcrumbs = true
 
 # Favicon
 faviconPath = "override"
+
+[params.umami]
+enable = true
+websiteId = "49d40a0d-295b-48d1-acaf-ae9836aeb53f"
+jsLocation = "http://kaepr.github.io/umami.js"
 
 # Social icons
 [[params.social]]
