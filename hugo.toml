@@ -12,7 +12,7 @@ description = "Shagun Agrawal's personal blog. Posts about functional programmin
 
 # Appearance settings
 theme = 'dark'
-colorPalette = "gruvebox"
+colorPalette = "default"
 
 # Intro on main page, content is markdown
 homeIntroTitle = 'Hi!'

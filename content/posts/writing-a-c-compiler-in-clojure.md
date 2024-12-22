@@ -65,7 +65,147 @@ The code is avaiable at [kaepr/cljcc](https://github.com/kaepr/cljcc).
 
 ## Lexer
 
+The first stage is the lexer, which converts the given input file to a list of tokens.
 
+```clj
+(def source "
+int main(void) {
+  return 42;
+}
+")
+
+(lex source)
+
+;; => 
+{:tokens
+ [{:kind :kw-int, :line 2, :col 1}
+  {:kind :identifier, :line 2, :col 5, :literal "main"}
+  {:kind :left-paren, :line 2, :col 9}
+  {:kind :kw-void, :line 2, :col 10}
+  {:kind :right-paren, :line 2, :col 14}
+  {:kind :left-curly, :line 2, :col 16}
+  {:kind :kw-return, :line 3, :col 3}
+  {:kind :number, :line 3, :col 10, :literal "42"}
+  {:kind :semicolon, :line 3, :col 12}
+  {:kind :right-curly, :line 4, :col 1}
+  {:kind :eof, :line 5, :col 1}],
+ :line 5,
+ :col 1}
+```
+
+The lexer pass is responsible for identifying keywords, numbers, identifiers, operators, ignoring whitespace etc.
+Each character from the input file needs to be match for a valid token. 
+For e.g., if the current character is `\n`, we can ignore it and move to the next character.
+If it's a valid alphabetical character, then we need to parse the remaining characters till we encounter a word break, then we check whether it's a valid keyword or an identifier. 
+Similar rules are followed to tokenize operators, numbers etc.
+
+My initial approach was using an index into the input string, which would point to current character.
+I would try to match this character, and from there decide whether to parse it as a number, identifier etc. This is how it looked like.
+
+
+```clj
+(defn lex [idx source]
+  (let [ch (nth source idx)]
+    (cond
+      (digit? ch) (let [end-idx (; use regex to find word break
+                                 ; return that index
+                                 )
+                        digit (subvec source idx end-idx)
+                        _ (valid-digit? digit)
+                        token (create-digit-token digit)]
+                    (conj (lex (inc end-idx) source) token))
+      (alphabet? ch) (let [end-idx (;use regex to find word break
+                                    ;return that index
+                                    )
+                           identifier (subvec source idx end-idx)
+                           keyword? (is-keyword? identifier)
+                           token (create-token identifier keyword?)]
+                       (conj (lex (inc end-idx) source) token))
+      (...) (...)
+      :else (lexer-error idx source))))
+
+```
+
+But this approach became too complicated.
+I was heavily using the index.
+In each condition clause, I would try to a corresponding ending index ( after matching letters / digits etc ).
+From both those indexes, would get the identifier and create the token.
+I haven't added handling errors or bad input in the above code, so each clause was more complex. 
+I was getting off by one errors and it was overall hard to debug. 
+This was approach was similar to one present in [Crafting Interpreters | Scanner](https://craftinginterpreters.com/scanning.html). 
+I was converting imperative Java code to Clojure, and it wasn't working out.
+
+I had earlier watched this video [Code Review: Clojure Lexer by ThePrimeAgen](https://www.youtube.com/watch?v=SGBuBSXdtLY). 
+In that video, they were doing code review, for a lexer written in Clojure.
+[Clojure Lexer implementation by Vikasg7](https://github.com/ThePrimeagen/ts-rust-zig-deez/tree/master/clj)
+
+This lexer was also written for a C like language, thus the main structure for the lexer was also suitable for tokenizing C programs. 
+I took reference from this code, and implemented the lexer.
+
+```clj
+(defn- lexer-ctx []
+  {:tokens []
+   :line 1
+   :col 1})
+
+(defn lex
+  ([source]
+   (lex source (lexer-ctx)))
+  ([[ch pk th :as source] {:keys [line col] :as ctx}]
+   (cond
+     (empty? source) (update ctx :tokens #(conj % (t/create :eof line col)))
+     (...) (...)
+     (whitespace? ch) (recur (next source)
+                             (-> ctx
+                                 (update :col inc)))
+     (letter? ch) (let [[chrs rst] (split-with letter-digit? source)
+                        lexeme (apply str chrs)
+                        cnt (count chrs)
+                        kind (t/identifier->kind lexeme)
+                        token (if (= :identifier kind)
+                                (t/create kind line col lexeme)
+                                (t/create kind line col))]
+                    (recur (apply str rst) (-> ctx
+                                                    (update :col #(+ % cnt))
+                                                    (update :tokens #(conj % token)))))
+     :else (exc/lex-error {:line line :col col}))))
+```
+
+The main insights which helped simplify was that keeping an index around is not necessary.
+I used index to find the current character, but a simpler way of getting the current character is destructuring.
+[Destructuring](https://clojure.org/guides/destructuring#_sequential_destructuring) made the overall code much simpler.
+I can get as many characters I want, and also keep the original string.
+
+```clj
+[first-char second-char third-char :as source] "abcde"
+=> \a \b \c "abcde"
+```
+
+To simplify the individual conditional cases, instead of manually keeping track of index, using functions which specialized in string processing was the solution.
+
+For e.g.
+
+```
+var_name = 10;
+^       ^
+start   end
+```
+
+The earlier implementation would start from the start index, keep increasing index till it finds whitespace.
+Then use these two indexes to build the identifier. 
+This is really error prone.
+
+Instead of manually finding ending index, a simpler way is to just, 
+
+```clj
+(split-with letter? "var_name = 10;")
+=> 
+[(\v \a \r \_ \n \a \m \e) (\space \= \space \1 \0 \;)]
+```
+
+pass the entire input string to a function which is responsible for matching characters given a predicate.
+The first part is then converted to a token, and `lex` called recursively on rest of the string.
+The final result is first token conj'd to result of the recursive call.
 
 ## Parser
 
@@ -163,3 +303,6 @@ As of now, I feel the base structure of the compiler is there, and each feature 
 But as those features are more complex than the ones presented above, there is a still a gradual difficulty curve,
 and I notice more oppurtunities to make my code simpler.
 Looking forward to implementing the rest of the book !
+
+<!--  LocalWords:  tokenizing
+ -->
