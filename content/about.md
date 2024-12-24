@@ -3,6 +3,8 @@ title: About Me
 hideBackToTop: true
 ---
 
-I am computer science graduate, with a keen interest in compilers, programming languages and functional programming.
+I am a software engineer, with interest in programming languages, compilers and functional programming.
 
-I currently work at Google, Bangalore. At work, I mostly use Java and build APIs to automate and streamline Google's supplychain domain.
+This website is to document my learnings, share my projects and write about random things I find interesting.
+
+I currently work at Google, Bangalore. I work on automating and streamlining Google's Supplychain domain.
