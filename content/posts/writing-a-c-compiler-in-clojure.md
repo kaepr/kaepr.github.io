@@ -676,7 +676,7 @@ Overall this phase of the compiler returns the same AST as previous phase, but w
 The book introduces an intermediate IR representation called Tacky.
 Expressions from above passes are converted to a [three-address code](https://www.geeksforgeeks.org/three-address-code-compiler/).
 Below is an example output from this pass. 
-The instructions key now has instructions such `jump`, `copy`, `add` etc.
+The instructions key now has instructions such as `jump`, `copy`, `add` etc.
 This is closer to the assembly representation.
 This pass reduces the nested expressions to variables.
 The operands to each instruction are either a constant value, or a variable.
@@ -805,7 +805,7 @@ The other statements inside the `if` block are generated, and the result from al
 The main change is now using `symbols` parameter. Which is an atom, containing a map from variable identifiers to their type / initial value etc.
 Always returning an updated version of this map felt tedious now, and for this phase I used an atom.
 
-The other place which felt repetitive was how I processing the AST nodes.
+The other place which felt repetitive was how I processed the AST nodes.
 Below is the schema for an expression.
 
 ```clj
@@ -962,7 +962,7 @@ There's a lot of logic and edge cases to be handled, so that the assembly produc
 
 - Functions have to follow [System V calling](https://en.wikipedia.org/wiki/X86_calling_conventions). 
 First 6 parameters are passed in registers, other on the stack. 
-- Stack pointer needs to be a multiple of 16. As different types take up different space, this needs to maintained manually by rounding to nearing offsets.
+- Stack pointer needs to be a multiple of 16. As different types take up different space, this needs to maintained manually by rounding to nearest offsets.
 - Several assembly instructions cannot take both operands as memory addresses, so they are rewritten using intermediate registers. 
 
 There are other smaller details such as above, but apart from that this phase codewise is not doing anything interesting.
